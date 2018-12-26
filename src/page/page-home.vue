@@ -26,12 +26,12 @@
       </b-collapse>
     </b-navbar>
     <div class="movie-list">
-    <span v-for="(o) in jsonData"
-        :key="o">
-      <div class="card mb-2 list_item">
+    <span v-for="(o,index) in jsonData" :key="index">
+      <div class="card mb-2 list_item" @mouseenter="enter()" v-on:click="toPlayer(o)">
           <img :src="o.coverImg" alt="Image" class="card-img-top">
           <div class="card-body">
-              <p class="card-title">导演:{{o.figures.director[0]}}</p>
+              <span class="card-title">{{o.videoName}}</span>
+              <br/>
               <span class="card-title">主演:{{o.figures.director}}</span>
           </div>
           </div>
@@ -46,8 +46,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 export default {
   data() {
     return {
-      currentDate: new Date(),
-      jsonData:"12121"
+      jsonData:[]
     };
   },
   methods: {
@@ -55,18 +54,24 @@ export default {
       this.$fetch('http://106.12.40.55:8087/getMovies.do?videoId=1005&page=1&page_size=20')
       .then((response) => {
         let sData = response.responseBody;
-        console.log(sData)
-        debugger
         this.jsonData = sData;
       })
-  .catch(function (error) {
-    console.log(error);
-  });
+    },
+      enter() {
 
-    }
+      },
+        toPlayer(o) {
+          let data = JSON.stringify(o);
+          const { href } =  this.$router.resolve({
+          path: 'player',
+          query: {
+            par: data
+          }
+        })
+       window.open(href, '_blank');
+        }
   }, mounted () { 
      this.getData()
-     console.log(jsonData)
   },
 };
 </script>
